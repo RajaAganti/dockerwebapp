@@ -2,25 +2,43 @@ version: "3.9"
 
 services:
   devopsdb:
-    image: shaikmustafa/deepika:db
-    ports:
-      - "3306:3306"
+    image: rajaaganti/mydb:db
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root
+      MYSQL_DATABASE: accounts
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - mynetwork
     deploy:
       replicas: 1
-    networks:
-      - mynetwork
+      placement:
+        constraints:
+          - node.role == manager   # pin DB to a manager if using local volume
+      restart_policy:
+        condition: on-failure
 
   application:
-    image: shaikmustafa/deepika:app
+    image: rajaaganti/myapp:app
     ports:
-      - "1111:8080"
-    deploy:
-      replicas: 3
-    depends_on:
-      - devopsdb
+      - "1111:8080"                # routing mesh load-balances across replicas
     networks:
       - mynetwork
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 10s
+
+volumes:
+  mysql-data:
 
 networks:
   mynetwork:
     driver: overlay
+
+secrets:
+  mysql_root:
+    file: ./secrets/mysql_root.txt

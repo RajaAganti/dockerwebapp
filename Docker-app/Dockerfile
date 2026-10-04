@@ -1,9 +1,14 @@
-FROM tomcat:8-jre11
+FROM tomcat:9-jdk17-temurin
 
+# Remove default apps
 RUN rm -rf /usr/local/tomcat/webapps/*
 
+# Copy WAR
 COPY target/vprofile-v2.war /usr/local/tomcat/webapps/ROOT.war
 
-CMD ["catalina.sh", "run"]
+# Optional: non-root user (tomcat image already has 'tomcat' user)
+RUN chown -R tomcat:tomcat /usr/local/tomcat/webapps
 
-#this is a comment 1
+EXPOSE 8080
+
+CMD ["catalina.sh", "run"]

@@ -1,6 +1,14 @@
-FROM mysql:5.7.25
+FROM mysql:8.0
 
-ENV MYSQL_ROOT_PASSWORD="devopspassword"
-ENV MYSQL_DATABASE="accounts"
-#dont expose passwords here
-ADD db_backup.sql docker-entrypoint-initdb.d/db_backup.sql
+# App database and user (read from build args or runtime env)
+ENV MYSQL_DATABASE=accounts
+ENV MYSQL_USER=appuser
+# Passwords supplied at runtime, NOT baked in:
+# docker run -e MYSQL_ROOT_PASSWORD=... -e MYSQL_PASSWORD=... ...
+
+# Seed data — runs only on first init of an empty data dir
+COPY db_backup.sql /docker-entrypoint-initdb.d/
+
+EXPOSE 3306
+
+# Official image already has a sane CMD; no need to override
