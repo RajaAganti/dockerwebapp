@@ -10,20 +10,28 @@ services:
       - mysql-data:/var/lib/mysql
     networks:
       - mynetwork
+    secrets:
+      - mysql_root
     deploy:
       replicas: 1
       placement:
         constraints:
-          - node.role == manager   # pin DB to a manager if using local volume
+          - node.role == manager
       restart_policy:
         condition: on-failure
 
   application:
     image: rajaaganti/appstack:app
     ports:
-      - "1111:8080"                # routing mesh load-balances across replicas
+      - "1111:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://devopsdb:3306/accounts?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD_FILE: /run/secrets/mysql_root
     networks:
       - mynetwork
+    secrets:
+      - mysql_root
     deploy:
       replicas: 3
       restart_policy:
@@ -38,7 +46,8 @@ volumes:
 networks:
   mynetwork:
     driver: overlay
+    attachable: true
 
 secrets:
   mysql_root:
-    file: ./secrets/mysql_root.txt
+    external: true
