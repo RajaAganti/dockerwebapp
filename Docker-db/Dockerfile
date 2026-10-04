@@ -7,7 +7,7 @@ ENV MYSQL_USER=appuser
 # docker run -e MYSQL_ROOT_PASSWORD=... -e MYSQL_PASSWORD=... ...
 
 # Seed data — runs only on first init of an empty data dir
-COPY db_backup.sql /docker-entrypoint-initdb.d/
+ADD db_backup.sql /docker-entrypoint-initdb.d/db_backup.sql
 
 EXPOSE 3306
 
