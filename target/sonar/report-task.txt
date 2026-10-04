@@ -1,0 +1,6 @@
+projectKey=Sonar
+serverUrl=http://32.198.116.231:9000
+serverVersion=26.9.0.129388
+dashboardUrl=http://32.198.116.231:9000/dashboard?id=Sonar
+ceTaskId=43a5c48e-2989-4ddd-a9e5-42b3df7273be
+ceTaskUrl=http://32.198.116.231:9000/api/ce/task?id=43a5c48e-2989-4ddd-a9e5-42b3df7273be
