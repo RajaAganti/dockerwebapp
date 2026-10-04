@@ -1,4 +1,4 @@
-FROM mysql:8.0
+FROM mysql:5.7.25
 
 # App database and user (read from build args or runtime env)
 ENV MYSQL_DATABASE=accounts
